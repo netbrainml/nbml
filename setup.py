@@ -8,4 +8,6 @@ setuptools.setup(
     description="Various tools used for machine learning",
     url="https://github.com/netbrainml/nbml",
     packages=setuptools.find_packages(),
+    install_requires=['torch>=1.0', 'fastai', 'tensorflow'],
+
     )

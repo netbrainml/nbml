@@ -51,6 +51,5 @@ class BasicTrainableClassifier(nn.Module):
         self.train_loss.append(train_loss/(idx+1))
         self.valid_acc.append(valid_acc/(idx+1))
         self.valid_loss.append(valid_loss/(idx+1))
-        print(f'''Accuracy: (V:{self.valid_acc[-1]}, T:{self.train_acc[-1]}, 
-                  Loss: (V:{self.valid_loss[-1]}, T:{self.train_loss[-1]})''')
+        print(f"Accuracy: (V:{self.valid_acc[-1]}, T:{self.train_acc[-1]}), Loss: (V:{self.valid_loss[-1]}, T:{self.train_loss[-1]})")
         self.train()

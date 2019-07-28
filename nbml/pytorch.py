@@ -12,7 +12,11 @@ class BasicTrainableClassifier(nn.Module):
     def __init__(self, crit=nn.CrossEntropyLoss(), rg = True):
         super().__init__()
         self.crit = crit
-        self.dtype = long() if self.crit == None else float()
+        try:
+            self.crit(torch.ones(1,1), torch.ones(1,1).long())
+            self.dtype = long()
+        except:
+            self.dtype = float()
         self.rg = rg 
         self.train_acc = []; self.valid_acc = []
         self.train_loss = []; self.valid_loss = []
@@ -53,3 +57,4 @@ class BasicTrainableClassifier(nn.Module):
         self.valid_loss.append(valid_loss/(idx+1))
         print(f"Accuracy: (V:{self.valid_acc[-1]}, T:{self.train_acc[-1]}), Loss: (V:{self.valid_loss[-1]}, T:{self.train_loss[-1]})")
         self.train()
+

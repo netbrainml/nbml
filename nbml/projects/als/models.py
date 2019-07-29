@@ -1,5 +1,6 @@
 from ...pytorch import *
 import cv2 as cv
+import pickle
 
 class rC3D(BasicTrainableClassifier):
     def __init__(self, in_c, num_classes, **kwargs):

@@ -63,11 +63,11 @@ class BasicTrainableClassifier(nn.Module):
     def plot(self):
         fig = plt.figure(figsize=(15,7.5), dpi= 80)
         plt.subplot(1, 2, 1)
-        plen(self.valid_acc, label_ = "validation"), plen(self.train_acc, label_ = "training")
+        pltlen(self.valid_acc, label_ = "validation"), pltlen(self.train_acc, label_ = "training")
         plt.legend()
         plt.title(f"Accuracy: (V:{self.valid_acc[-1]}, T:{self.train_acc[-1]})")
         plt.subplot(1, 2, 2)
-        plen(self.valid_loss, label_ = "validation"), plen(self.train_loss, label_ = "training")
+        pltlen(self.valid_loss, label_ = "validation"), pltlen(self.train_loss, label_ = "training")
         plt.legend()
         plt.title(f"Loss: (V:{self.valid_loss[-1]}, T:{self.train_loss[-1]})")
         plt.show()

@@ -50,13 +50,12 @@ class BasicTrainableClassifier(nn.Module):
             train_pred = self(cc(data[0]))
             train_acc += self.acc(train_pred, cc(data[1], self.dtype)).item()
             train_loss += self.crit(train_pred, cc(data[1], self.dtype)).item()
+        self.train_acc.append(train_acc/(idx+1))
+        self.train_loss.append(train_loss/(idx+1))
         for idx,data in enumerate(valid_ds):
             valid_pred = self(cc(data[0]))
             valid_acc += self.acc(valid_pred, cc(data[1], self.dtype)).item()
             valid_loss += self.crit(valid_pred, cc(data[1], self.dtype)).item()
-
-        self.train_acc.append(train_acc/(idx+1))
-        self.train_loss.append(train_loss/(idx+1))
         self.valid_acc.append(valid_acc/(idx+1))
         self.valid_loss.append(valid_loss/(idx+1))
         print(f"Accuracy: (V:{self.valid_acc[-1]}, T:{self.train_acc[-1]}), Loss: (V:{self.valid_loss[-1]}, T:{self.train_loss[-1]})")

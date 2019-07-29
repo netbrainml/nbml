@@ -76,8 +76,8 @@ def ConvRelu(in_c,out_c,ks,stride,padding):
     conv1 = nn.Conv3d(in_c, out_c, ks, stride,padding)
     return nn.Sequential(conv1,nn.LeakyReLU())
 
-class rC3DBlock(BasicTrainableClassifier,**kwargs):
-    def __init__(self, in_c, out_c, ks=3):
+class rC3DBlock(BasicTrainableClassifier):
+    def __init__(self, in_c, out_c, ks=3,**kwargs):
         super().__init__(**kwargs)
         self.rconv1 = ResConv(in_c, ks, ks//2); self.bn1 = nn.BatchNorm3d(in_c)
         self.conv1 = ConvRelu(in_c, out_c, ks, 1, ks//2)

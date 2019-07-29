@@ -2,7 +2,7 @@ from ...pytorch import *
 from keras.preprocessing import sequence
 from keras.datasets import imdb
 
-def sliceton(X,Y,n):
+def sliceton(X,Y,n,dictv):
     out = []
     ys = np.array([])
     for i,review in enumerate(tqdm(X)):
@@ -32,9 +32,9 @@ def load_dict():
     dictv["<UNK>"] = 2
     dictv["<UNUSED>"] = 3
     return dictv
-def process_imdb(X_train, y_train, X_test, y_test, n, bs=64):
-    X_train_pds, y_train_pds = sliceton(X_train, y_train, n)
-    X_test_pds, y_test_pds = sliceton(X_test, y_test, n)
+def process_imdb(X_train, y_train, X_test, y_test, n, dictv, bs=64):
+    X_train_pds, y_train_pds = sliceton(X_train, y_train, n, dictv)
+    X_test_pds, y_test_pds = sliceton(X_test, y_test, n, dictv)
     x_train, x_test = ntot(X_train_pds), ntot(X_test_pds)
     y_train, y_test = torch.Tensor(y_train_pds), torch.Tensor(y_test_pds)
     tdl = DataLoader(TensorDataset(x_train, y_train), batch_size=bs, shuffle=True)

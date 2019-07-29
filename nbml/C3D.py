@@ -51,4 +51,4 @@ def train_valid(X,Y, split, idx):
     try:
         return X[train], X[valid], Y[train], Y[valid]
     except:
-        return [X[i] for i in train], Y[train], [X[i] for i in valid], Y[valid]
+        return [X[i] for i in train], [X[i] for i in valid], Y[train], Y[valid]

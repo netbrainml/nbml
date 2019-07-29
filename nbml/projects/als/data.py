@@ -34,13 +34,11 @@ def sliceseq(x, y, sl):
         ys = torch.stack([y[idx] for _ in range(sframes.shape[0])]) if ys  is None else torch.cat((ys, torch.stack([y[idx] for _ in range(sframes.shape[0])])))
     return xs,ys
 
-def split_slice(x, y, idx, split = 0.7, sl = 3):
+def split_slice(x, y, idx, split = 0.6, sl = 3):
     x_train, x_test, y_train, y_test = train_valid(x, y, split, idx)
-    assert(set([i.item() for i in y_train])==set([i.item() for i in y_test]))
-    shapes(x_train, x_test, y_train, y_test)
+    # assert(set([i.item() for i in y_train])==set([i.item() for i in y_test]))
     x_train, y_train = sliceseq(x_train, y_train, sl)
     x_test, y_test = sliceseq(x_test, y_test, sl)
-    shapes(x_train, x_test, y_train, y_test)
     ix = get_idx(x_test)
     x_test, y_test = shuffle(x_test, y_test, ix)
     return x_train, x_test, y_train, y_test

@@ -3,6 +3,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
 from tqdm import tqdm
+from tools import *
 
 def cc(x, y=None):
     if torch.cuda.device_count(): return x.cuda() if not y else x.cuda().y
@@ -58,3 +59,15 @@ class BasicTrainableClassifier(nn.Module):
         print(f"Accuracy: (V:{self.valid_acc[-1]}, T:{self.train_acc[-1]}), Loss: (V:{self.valid_loss[-1]}, T:{self.train_loss[-1]})")
         self.train()
 
+    @property
+    def plot(self):
+        fig = plt.figure(figsize=(15,7.5), dpi= 80)
+        plt.subplot(1, 2, 1)
+        plen(self.valid_acc, label_ = "validation"), plen(self.train_acc, label_ = "training")
+        plt.legend()
+        plt.title(f"Accuracy: (V:{self.valid_acc[-1]}, T:{self.train_acc[-1]})")
+        plt.subplot(1, 2, 2)
+        plen(self.valid_loss, label_ = "validation"), plen(self.train_loss, label_ = "training")
+        plt.legend()
+        plt.title(f"Loss: (V:{self.valid_loss[-1]}, T:{self.train_loss[-1]})")
+        plt.show()

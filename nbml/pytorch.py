@@ -3,7 +3,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
 from tqdm import tqdm
-from tools import *
+from .tools import *
 
 def cc(x, y=None):
     if torch.cuda.device_count(): return x.cuda() if not y else x.cuda().y

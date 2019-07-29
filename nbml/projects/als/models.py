@@ -2,8 +2,8 @@ from ...pytorch import *
 import cv2 as cv
 
 class rC3D(BasicTrainableClassifier):
-    def __init__(self, in_c, num_classes):
-        super().__init__()
+    def __init__(self, in_c, num_classes, **kwargs):
+        super().__init__(**kwargs)
         self.ls = nn.Sequential(ConvRelu(in_c, 16, 3, 1, 1),
                                 rC3DBlock(16, 32),
                                 rC3DBlock(32, 64),
@@ -19,8 +19,8 @@ class rC3D(BasicTrainableClassifier):
         return ft
 
 class grC3D(BasicTrainableClassifier):
-    def __init__(self, in_c, num_classes, path):
-        super().__init__()
+    def __init__(self, in_c, num_classes, path, **kwargs):
+        super().__init__(**kwargs)
         with open(path, "rb") as mfile:
             self.gan = pickle.load(mfile)
         self.model = rC3D(in_c, num_classes)
@@ -30,8 +30,8 @@ class grC3D(BasicTrainableClassifier):
         return self.model(gX)
 
 class OFrC3D(BasicTrainableClassifier):
-    def __init__(self, in_c, num_classes):
-        super().__init__()
+    def __init__(self, in_c, num_classes,**kwargs):
+        super().__init__(**kwargs)
         self.model = rC3D(in_c, num_classes)
         
     def __call__(self,x):
@@ -76,9 +76,9 @@ def ConvRelu(in_c,out_c,ks,stride,padding):
     conv1 = nn.Conv3d(in_c, out_c, ks, stride,padding)
     return nn.Sequential(conv1,nn.LeakyReLU())
 
-class rC3DBlock(BasicTrainableClassifier):
+class rC3DBlock(BasicTrainableClassifier,**kwargs):
     def __init__(self, in_c, out_c, ks=3):
-        super().__init__()
+        super().__init__(**kwargs)
         self.rconv1 = ResConv(in_c, ks, ks//2); self.bn1 = nn.BatchNorm3d(in_c)
         self.conv1 = ConvRelu(in_c, out_c, ks, 1, ks//2)
     def __call__(self, X):
@@ -87,8 +87,8 @@ class rC3DBlock(BasicTrainableClassifier):
         return cfm1
 
 class rC3DBlockMP(BasicTrainableClassifier):
-    def __init__(self, in_c, out_c, pad=False):
-        super().__init__()
+    def __init__(self, in_c, out_c, pad=False,**kwargs):
+        super().__init__(**kwargs)
         self.rconv1 = ResConv(in_c, 3, 1); self.conv1 = ConvRelu(in_c, out_c, 3, 1, 1)
         self.bn1 = nn.BatchNorm3d(in_c)
         self.mp1 = nn.MaxPool2d((2,2), 2, 1) if pad else nn.MaxPool2d((2,2), 2)

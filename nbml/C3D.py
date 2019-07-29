@@ -44,3 +44,8 @@ def split_slice(x, y, idx, split = 0.7, sl = 3):
     ix = get_idx(x_test)
     x_test, y_test = shuffle(x_test, y_test, ix)
     return x_train, x_test, y_train, y_test
+    
+def train_valid(X,Y, split, idx):
+    train = idx[:round(X.shape[0]*split)]
+    valid = idx[round(X.shape[0]*split):]
+    return X[train], X[valid], Y[train], Y[valid]

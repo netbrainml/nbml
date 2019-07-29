@@ -1,6 +1,7 @@
 from ...pytorch import *
 from keras.preprocessing import sequence
 from keras.datasets import imdb
+from torch.utils.data import DataLoader, TensorDataset
 
 def sliceton(X,Y,n,dictv):
     out = []

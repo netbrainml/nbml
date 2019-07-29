@@ -13,4 +13,6 @@ def flatten(x): return x.reshape(np.multiply(*x.shape))
 def get_idx(X):
     return np.random.permutation(X.shape[0]) if hasattr(X, 'shape') else np.random.permutation(len(X))
 
-
+def get_layers(start, hs, end, step):
+    lse = [*list(range(hs, end, -step)), end]
+    return list(zip([start,*lse[:]], [*lse[:], end]))[:-1]

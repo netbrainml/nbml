@@ -41,3 +41,7 @@ def process_imdb(X_train, y_train, X_test, y_test, n, dictv, bs=64):
     tdl = DataLoader(TensorDataset(x_train, y_train), batch_size=bs, shuffle=True)
     vdl = DataLoader(TensorDataset(x_test, y_test), batch_size=bs, shuffle=True)
     return tdl, vdl
+
+def decode_review(text, dictv):
+    reverse_word_index = dict([(value, key) for (key, value) in dictv.items()])
+    return ' '.join([reverse_word_index.get(i, '?') for i in text])

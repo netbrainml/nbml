@@ -23,14 +23,13 @@ vocab = [
 ]
 
 def getCIFAR100():
-    (x_train, y_train_r), (x_test, y_test_r) = cifar100.load_data(label_mode='fine')
+    (x_train, y_train), (x_test, y_test) = cifar100.load_data(label_mode='fine')
     x_train, x_test = x_train/255, x_test/255
-    y_train, y_test = keras.utils.to_categorical(y_train_r, 100), keras.utils.to_categorical(y_test_r, 100)
     shapes(x_train, x_test, y_train, y_test)
     return x_train, x_test, y_train, y_test
 def torchCIFAR100(x_train, x_test, y_train, y_test, bs=128):
     x_train, x_test = torch.Tensor(x_train).transpose(-1,1), torch.Tensor(x_test).transpose(-1,1)
-    y_train, y_test = torch.Tensor(y_train_r).squeeze(), torch.Tensor(y_test_r).squeeze()
+    y_train, y_test = torch.Tensor(y_train).squeeze(), torch.Tensor(y_test).squeeze()
     shapes(x_train, x_test, y_train, y_test)
     tdl = DataLoader(TensorDataset(x_train, y_train), batch_size=bs, shuffle=True)
     vdl = DataLoader(TensorDataset(x_test, y_test), batch_size=bs, shuffle=True)

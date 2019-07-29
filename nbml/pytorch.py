@@ -5,18 +5,22 @@ import torch.optim as optim
 from tqdm import tqdm
 from .tools import *
 
+
 def cc(x, y=None):
-    if torch.cuda.device_count(): return x.cuda() if not y else x.cuda().y
-    return x if not y else x.y
+    if torch.cuda.device_count():
+        if not y: return x.cuda()
+        return x.cuda().long() if y =="long" else x.cuda().float()
+    if not y: return x
+    return x.long() if y =="long" else x.float()
 
 class BasicTrainableClassifier(nn.Module):
     def __init__(self, crit=nn.CrossEntropyLoss(), rg = True):
         super().__init__()
         self.crit = crit
         if repr(crit) == repr(nn.CrossEntropyLoss()):
-            self.dtype = long()
+            self.dtype = "long"
         else:
-            self.dtype = float()
+            self.dtype = "float"
         self.rg = rg 
         self.train_acc = []; self.valid_acc = []
         self.train_loss = []; self.valid_loss = []

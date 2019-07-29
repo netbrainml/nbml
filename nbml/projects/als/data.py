@@ -1,6 +1,6 @@
 from torch.utils.data import DataLoader, TensorDataset
 from functools import partial
-from .pytorch import *
+from ...pytorch import *
 
 loadnp = partial(np.load, allow_pickle=True)
 

@@ -13,10 +13,9 @@ class BasicTrainableClassifier(nn.Module):
     def __init__(self, crit=nn.CrossEntropyLoss(), rg = True):
         super().__init__()
         self.crit = crit
-        try:
-            self.crit(torch.ones(1,1), torch.ones(1,1).long())
+        if repr(crit) == repr(nn.CrossEntropyLoss()):
             self.dtype = long()
-        except:
+        else:
             self.dtype = float()
         self.rg = rg 
         self.train_acc = []; self.valid_acc = []

@@ -1,4 +1,4 @@
-import ...pytorch
+from ...pytorch import *
 from keras.preprocessing import sequence
 from keras.datasets import imdb
 

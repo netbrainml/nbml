@@ -48,4 +48,7 @@ def split_slice(x, y, idx, split = 0.7, sl = 3):
 def train_valid(X,Y, split, idx):
     train = idx[:round(len(X)*split)]
     valid = idx[round(len(X)*split):]
-    return X[train], X[valid], Y[train], Y[valid]
+    try:
+        return X[train], X[valid], Y[train], Y[valid]
+    except:
+        return [X[i] for i in train], Y[train], [X[i] for i in valid], Y[valid]

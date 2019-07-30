@@ -22,7 +22,7 @@ def get_data(size=500, verbose=True, neg=False):
     if verbose: print(f"Our actual slope and bias is: {slope, bias}")
     return X,Y, slope, bias
 
-def visualize(X,Y,pred, rt=False)
+def visualize(X,Y,pred, rt=False):
     plt.plot(X,Y, label = "Actual")
     plt.plot(X,pred, label="Prediction")
     plt.legend()

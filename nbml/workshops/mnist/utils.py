@@ -2,10 +2,10 @@ from ...pytorch import *
 from IPython.display import clear_output
 import time
 
-def show_imgs(imgs,hm=10, dim=28):
+def show_imgs(imgs,labels,hm=10, dim=28):
 	for i in np.random.permutation(len(imgs))[:hm]:
 	    plt.imshow(imgs[i].reshape(dim,dim)/255,'gray')
-	    plt.title(label[i])
+	    plt.title(labels[i])
 	    plt.show()
 	    time.sleep(0.1)
 	    clear_output(wait=True)
@@ -37,3 +37,5 @@ def seeResults(model, x, y):
         pred = softmax(model.predict(x[idx][None,:])) #Here the model makes a prediction
         plt.xlabel(f"Label:{y[idx]}, Pred:{np.argmax(pred)}")
     plt.show()
+
+def softmax(x): return np.exp(x.squeeze())/sum(np.exp(x.squeeze()))

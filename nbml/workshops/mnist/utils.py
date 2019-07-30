@@ -1,6 +1,7 @@
 from ...pytorch import *
 from IPython.display import clear_output
 import time
+import pandas as pd
 
 def show_imgs(imgs,labels,hm=10, dim=28):
 	for i in np.random.permutation(len(imgs))[:hm]:

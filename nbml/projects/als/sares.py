@@ -20,7 +20,7 @@ class StackPool(nn.Module):
 class ResBlockA(Module):
     def __call__(self, x): return self.act(self.layer(x)+self.idlayer(x))
 class ResBlockC(Module):
-    def __call__(self, x): return self.act(self.op((torch.cat([self.layer(x),self.idlayer(x)],dim=2))))
+    def __call__(self, x): return self.act(self.bn(self.op((torch.cat([self.layer(x),self.idlayer(x)],dim=2)))))
 
 def P3Dconv(ni,nf,stride=1,padding=1, s=True, t=False):
     return nn.Conv3d(ni,nf,kernel_size=(3,1,1) if not s or t else (1,3,3),stride=1,
@@ -50,6 +50,7 @@ class P3Da(ResBlockA):
                                    P3Dconv(nf,nf,padding=1, t=True))
         self.idlayer = nn.Conv3d(ni, nf, 3, **kwargs)
         self.act = nn.ReLU(inplace=True)
+        self.bn = nn.BatchNorm3d(nf)
 
 class FlattenDim(Module):
     def __init__(self, dim): self.dim=dim
@@ -57,19 +58,19 @@ class FlattenDim(Module):
 class P3DaModel(BasicTrainableClassifier):
     def __init__(self, ni, nc, no, **kwargs):
         super().__init__(**kwargs)
-        self.model = nn.Sequential(aP3Da(ni, 64, nc, padding=(1,0,0)),
+        self.model = nn.Sequential(aP3Da(ni, 16, nc, padding=(1,0,0)),
                                    nn.MaxPool3d((1,2,2),(1,2,2),(0,1,1)),
-                                   P3Da(64, 64, padding=1),
+                                   P3Da(16, 32, padding=1),
+                                   nn.MaxPool3d(2,2),
+                                   P3Da(32, 64, padding=1),
                                    nn.MaxPool3d(2,2),
                                    P3Da(64, 128, padding=1),
                                    nn.MaxPool3d(2,2),
                                    P3Da(128, 128, padding=1),
                                    nn.MaxPool3d(2,2),
-                                   P3Da(128, 256, padding=1),
-                                   nn.MaxPool3d(2,2),
                                    StackPool(1),
                                    FlattenDim(1),
-                                   nn.Linear(512,no)
+                                   nn.Linear(256,no)
                                   )
         init_cnn(self)
     def __call__(self,x): return self.model(x)

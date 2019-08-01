@@ -18,9 +18,9 @@ class StackPool(nn.Module):
     def __call__(self, X):
         return torch.cat((self.max(X), self.avg(X)), dim=1)
 class ResBlockA(Module):
-    def __call__(self, x): return self.act(self.layer(x)+self.idlayer(x))
+    def __call__(self, x): return self.bn(self.act(self.layer(x)+self.idlayer(x)))
 class ResBlockC(Module):
-    def __call__(self, x): return self.act(self.bn(self.op((torch.cat([self.layer(x),self.idlayer(x)],dim=2)))))
+    def __call__(self, x): return self.act(self.op((torch.cat([self.layer(x),self.idlayer(x)],dim=2))))
 
 def P3Dconv(ni,nf,stride=1,padding=1, s=True, t=False):
     return nn.Conv3d(ni,nf,kernel_size=(3,1,1) if not s or t else (1,3,3),stride=1,

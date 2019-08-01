@@ -30,6 +30,7 @@ class BasicTrainableClassifier(nn.Module):
         self.train()
         op = torch.optim.Adam(self.parameters(), lr=learning_rate)
         for e in range(epochs):
+            torch.cuda.empty_cache() if torch.cuda.device_count() else None
             print(f"Epoch {e+1}")
             for data in tqdm(train_ds):
                 op.zero_grad()

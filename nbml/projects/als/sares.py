@@ -43,6 +43,7 @@ class FlattenDim(Module):
     def __call__(self,x): return torch.flatten(x, start_dim=self.dim)
 class P3DaModel(BasicTrainableClassifier):
     def __init__(self, ni, nc, no):
+    	super().__init__()
         self.model = nn.Sequential(P3Da(ni, 64, nc, padding=(1,0,0)),
                                    nn.MaxPool3d((1,2,2),(1,2,2),(0,1,1)),
                                    P3Da(64, 128, ni+nc, padding=(0,1,1)),

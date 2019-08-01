@@ -124,8 +124,8 @@ class C3DBlock(BasicTrainableClassifier):
     def forward(self,x): return self.block(x)
 
 class C3D(BasicTrainableClassifier):
-    def __init__(self, nc, no):
-        super().__init__()
+    def __init__(self, nc, no, **kwargs):
+        super().__init__(**kwargs)
         self.cp_model = nn.Sequential(ConvRelu(nc, 64, 3, 1, 1),
                                       nn.MaxPool3d((1,2,2),(1,2,2)),
                                       ConvRelu(64, 128, 3, 1, 1),

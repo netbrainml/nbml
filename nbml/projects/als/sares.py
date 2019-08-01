@@ -50,7 +50,7 @@ class P3DaModel(BasicTrainableClassifier):
                                    nn.MaxPool3d(2,2),
                                    P3Da(128,256,34),
                                    nn.MaxPool3d(2,2, padding=(0,1,1)),
-                                   P3Da(256,512,80),
+                                   P3Da(256,256,80),
                                    nn.MaxPool3d(2,2),
                                    StackPool(1),
                                    FlattenDim(1),

@@ -136,5 +136,7 @@ class C3D(BasicTrainableClassifier):
                                       C3DBlock(512,512,padding=1))
         self.fc = nn.Sequential(nn.Linear(4096,4096),
                                 nn.Linear(4096,no))
+        init_cnn(self)
+
     def forward(self, x):
         return self.fc(torch.flatten(self.cp_model(x), start_dim=1))

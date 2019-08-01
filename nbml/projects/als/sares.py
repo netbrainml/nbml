@@ -44,16 +44,18 @@ class FlattenDim(Module):
 class P3DaModel(BasicTrainableClassifier):
     def __init__(self, ni, nc, no):
         super().__init__()
-        self.model = nn.Sequential(P3Da(ni, 64, nc, padding=(1,0,0)),
+        self.model = nn.Sequential(P3Da(ni, 16, nc, padding=(1,0,0)),
                                    nn.MaxPool3d((1,2,2),(1,2,2),(0,1,1)),
-                                   P3Da(64, 128, ni+nc, padding=(0,1,1)),
+                                   P3Da(16, 32, ni+nc, padding=(0,1,1)),
                                    nn.MaxPool3d(2,2),
-                                   P3Da(128,256,34),
-                                   nn.MaxPool3d(2,2, padding=(0,1,1)),
-                                   P3Da(256,256,80),
-                                   nn.MaxPool3d(2,2),
+                                   P3Da(32,64,10),
+                                   nn.MaxPool3d(2,2,padding=(0,1,1)),
+                                   P3Da(64,128,20),
+                                   nn.MaxPool3d(2,2,padding=1),
+                                   P3Da(128,128,42),
+                                   nn.MaxPool3d(2,2,padding=(0,1,1)),                                   
                                    StackPool(1),
                                    FlattenDim(1),
-                                   nn.Linear(1024,no)
+                                   nn.Linear(256,no)
                                   )
     def __call__(self,x): return self.model(x)

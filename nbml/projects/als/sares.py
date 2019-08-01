@@ -48,10 +48,10 @@ class P3DaModel(BasicTrainableClassifier):
                                    nn.MaxPool3d((1,2,2),(1,2,2),(0,1,1)),
                                    P3Da(16, 32, ni+nc, padding=(0,1,1)),
                                    nn.MaxPool3d(2,2),
-                                   P3Da(32,64,10),
+                                   nn.Conv3d(32,64,3),
                                    nn.MaxPool3d(2,2,padding=(0,1,1)),
-                                   P3Da(64,64,20),
-                                   nn.MaxPool3d(2,2,padding=1),                                   
+                                   nn.Conv3d(64,64,3),
+                                   nn.MaxPool3d(2,2,padding=1),
                                    StackPool(1),
                                    FlattenDim(1),
                                    nn.Linear(128,no)

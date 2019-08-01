@@ -54,6 +54,6 @@ class P3DaModel(BasicTrainableClassifier):
                                    nn.MaxPool3d(2,2,padding=1),                                   
                                    StackPool(1),
                                    FlattenDim(1),
-                                   nn.Linear(256,no)
+                                   nn.Linear(128,no)
                                   )
     def __call__(self,x): return self.model(x)

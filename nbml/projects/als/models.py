@@ -68,9 +68,9 @@ def init_cnn(m):
         
 def ResConv(in_c, kernel_size, stride):
     pad = kernel_size//2
-    conv1 = nn.Conv3d(in_c, in_c//2, 1, stride)
+    conv1 = nn.Conv3d(in_c, in_c//2, 1, 1)
     conv2 = nn.Conv3d(in_c//2, in_c//2, kernel_size, stride, padding=pad)
-    conv3 = nn.Conv3d(in_c//2, in_c, kernel_size, stride, padding=pad)
+    conv3 = nn.Conv3d(in_c//2, in_c, 1, 1, padding=pad)
     return nn.Sequential(conv1, conv2, conv3)
 
 def ConvRelu(in_c,out_c,ks,stride,padding):

@@ -56,4 +56,5 @@ class P3DaModel(BasicTrainableClassifier):
                                    FlattenDim(1),
                                    nn.Linear(128,no)
                                   )
+        init_cnn(self)
     def __call__(self,x): return self.model(x)

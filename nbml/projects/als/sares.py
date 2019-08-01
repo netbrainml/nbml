@@ -40,14 +40,15 @@ class aP3Da(ResBlockC):
         self.layer = nn.Sequential(P3Dconv(ni,nf,padding=0, s=True),
                                    P3Dconv(nf,nf,padding=1, t=True))
         self.idlayer = SAconv3d(nc, nf)
-        self.op = nn.Conv3d(nf,nf,3,**kwargs)
+        self.op = nn.Conv3d(nf, nf, 3, **kwargs)
         self.act = nn.ReLU(inplace=True)
+
 class P3Da(ResBlockA):
     def __init__(self, ni, nf,**kwargs):
         super().__init__()
         self.layer = nn.Sequential(P3Dconv(ni,nf,padding=0, s=True),
                                    P3Dconv(nf,nf,padding=1, t=True))
-        self.idlayer = nn.Conv3d(ni, nf,3, **kwargs)
+        self.idlayer = nn.Conv3d(ni, nf, 3, **kwargs)
         self.act = nn.ReLU(inplace=True)
 
 class FlattenDim(Module):
@@ -56,17 +57,19 @@ class FlattenDim(Module):
 class P3DaModel(BasicTrainableClassifier):
     def __init__(self, ni, nc, no, **kwargs):
         super().__init__(**kwargs)
-        self.model = nn.Sequential(aP3Da(ni, 16, nc, padding=(1,0,0)),
+        self.model = nn.Sequential(aP3Da(ni, 64, nc, padding=(1,0,0)),
                                    nn.MaxPool3d((1,2,2),(1,2,2),(0,1,1)),
-                                   P3Da(16, 32, padding=(0,1,1)),
+                                   P3Da(64, 64, padding=1),
                                    nn.MaxPool3d(2,2),
-                                   nn.Conv3d(32,64,3),
-                                   nn.MaxPool3d(2,2,padding=(0,1,1)),
-                                   nn.Conv3d(64,64,3),
-                                   nn.MaxPool3d(2,2,padding=1),
+                                   P3Da(64, 128, padding=1),
+                                   nn.MaxPool3d(2,2),
+                                   P3Da(128, 128, padding=1),
+                                   nn.MaxPool3d(2,2),
+                                   P3Da(128, 256, padding=1),
+                                   nn.MaxPool3d(2,2),
                                    StackPool(1),
                                    FlattenDim(1),
-                                   nn.Linear(128,no)
+                                   nn.Linear(512,no)
                                   )
         init_cnn(self)
     def __call__(self,x): return self.model(x)

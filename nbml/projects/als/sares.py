@@ -44,11 +44,11 @@ class aP3Da(ResBlockC):
         self.act = nn.ReLU(inplace=True)
 
 class P3Da(ResBlockA):
-    def __init__(self, ni, nf,**kwargs):
+    def __init__(self, ni, nf, pad=True,**kwargs):
         super().__init__()
         self.layer = nn.Sequential(nn.Conv3d(ni,nf,1),
-                                   P3Dconv(nf,nf,padding=(0,1,1), s=True),
-                                   P3Dconv(nf,nf,padding=(1,0,0), t=True),
+                                   P3Dconv(nf,nf,padding=(0,1,1) if pad, s=True),
+                                   P3Dconv(nf,nf,padding=(1,0,0) if pad, t=True),
                                    nn.Conv3d(nf,nf,1),)
         self.idlayer = nn.Conv3d(ni, nf, 3, **kwargs)
         self.act = nn.ReLU(inplace=True)
@@ -59,21 +59,24 @@ class FlattenDim(Module):
     def __call__(self,x): return torch.flatten(x, start_dim=self.dim)
 
 class P3DaModel(BasicTrainableClassifier):
-    def __init__(self, ni, nc, no, **kwargs):
+    def __init__(self, ni, no, **kwargs):
         super().__init__(**kwargs)
-        self.model = nn.Sequential(P3Da(ni, 16, padding=(1,0,0)),
-                                   nn.MaxPool3d((1,2,2),(1,2,2),(0,1,1)),
-                                   P3Da(16, 32, padding=1),
-                                   nn.MaxPool3d(2,2),
-                                   P3Da(32, 64, padding=1),
-                                   nn.MaxPool3d(2,2),
+        self.model = nn.Sequential(P3Da(ni, 64, padding=1),
+                                   nn.MaxPool3d((1,2,2),(1,2,2)),
                                    P3Da(64, 128, padding=1),
+                                   nn.MaxPool3d(2,2, padding=(1,0,0)),
+                                   P3Da(128, 256, padding=1),
+                                   P3Da(256, 512, padding=1),
                                    nn.MaxPool3d(2,2),
-                                   P3Da(128, 128, padding=1),
+                                   P3Da(512, 512, padding=1),
+                                   P3Da(512, 512, padding=1),
                                    nn.MaxPool3d(2,2),
-                                   StackPool(1),
+                                   P3Da(512, 512, padding=1),
+                                   P3Da(512, 512, padding=1),
+                                   nn.MaxPool3d(2,2),
                                    FlattenDim(1),
-                                   nn.Linear(256,no)
+                                   nn.Linear(8192,4096),
+                                   nn.Linear(4096,no)
                                   )
         init_cnn(self)
     def __call__(self,x): return self.model(x)

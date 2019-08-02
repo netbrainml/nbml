@@ -37,7 +37,7 @@ class SAconv3d(Module):
 class aP3Da(ResBlockC):
     def __init__(self, ni, nf, nc,**kwargs):
         super().__init__()
-        self.layer = nn.Sequential(P3Dconv(ni,nf,padding=0, s=True),
+        self.layer = nn.Sequential(P3Dconv(nf,nf,padding=0, s=True),
                                    P3Dconv(nf,nf,padding=1, t=True))
         self.idlayer = SAconv3d(nc, nf)
         self.op = nn.Conv3d(nf, nf, 3, **kwargs)
@@ -46,8 +46,10 @@ class aP3Da(ResBlockC):
 class P3Da(ResBlockA):
     def __init__(self, ni, nf,**kwargs):
         super().__init__()
-        self.layer = nn.Sequential(P3Dconv(ni,nf,padding=0, s=True),
-                                   P3Dconv(nf,nf,padding=1, t=True))
+        self.layer = nn.Sequential(nn.Conv3d(ni,nf,1),
+                                   P3Dconv(nf,nf,padding=(0,1,1), s=True),
+                                   P3Dconv(nf,nf,padding=(1,0,0), t=True),
+                                   nn.Conv3d(nf,nf,1),)
         self.idlayer = nn.Conv3d(ni, nf, 3, **kwargs)
         self.act = nn.ReLU(inplace=True)
         self.bn = nn.BatchNorm3d(nf)
@@ -55,10 +57,11 @@ class P3Da(ResBlockA):
 class FlattenDim(Module):
     def __init__(self, dim): self.dim=dim
     def __call__(self,x): return torch.flatten(x, start_dim=self.dim)
+
 class P3DaModel(BasicTrainableClassifier):
     def __init__(self, ni, nc, no, **kwargs):
         super().__init__(**kwargs)
-        self.model = nn.Sequential(aP3Da(ni, 16, nc, padding=(1,0,0)),
+        self.model = nn.Sequential(P3Da(ni, 16, padding=(1,0,0)),
                                    nn.MaxPool3d((1,2,2),(1,2,2),(0,1,1)),
                                    P3Da(16, 32, padding=1),
                                    nn.MaxPool3d(2,2),

@@ -47,8 +47,8 @@ class P3Da(ResBlockA):
     def __init__(self, ni, nf, pad=True,**kwargs):
         super().__init__()
         self.layer = nn.Sequential(nn.Conv3d(ni,nf,1),
-                                   P3Dconv(nf,nf,padding=(0,1,1) if pad, s=True),
-                                   P3Dconv(nf,nf,padding=(1,0,0) if pad, t=True),
+                                   P3Dconv(nf,nf,padding=(0,1,1) if pad else 0, s=True),
+                                   P3Dconv(nf,nf,padding=(1,0,0) if pad else 0, t=True),
                                    nn.Conv3d(nf,nf,1),)
         self.idlayer = nn.Conv3d(ni, nf, 3, **kwargs)
         self.act = nn.ReLU(inplace=True)

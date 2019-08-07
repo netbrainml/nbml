@@ -5,6 +5,10 @@ import torch.optim as optim
 from tqdm import tqdm
 from .tools import *
 
+def init_cnn(m, *layers):
+    if getattr(m, 'bias', None) is not None: nn.init.constant_(m.bias, 0)
+    if isinstance(m, (layers)): nn.init.kaiming_normal_(m.weight)
+    for l in m.children(): init_cnn(l)
 
 def cc(x, y=None):
     if torch.cuda.device_count():
@@ -14,9 +18,11 @@ def cc(x, y=None):
     return x.long() if y =="long" else x.float()
 
 class BasicTrainableClassifier(nn.Module):
-    def __init__(self, crit=nn.CrossEntropyLoss(), rg = True):
+    def __init__(self, crit=nn.CrossEntropyLoss(),
+                 opt = torch.optim.Adam, rg = True):
         super().__init__()
         self.crit = crit
+        self.opt = opt
         if repr(crit) == repr(nn.CrossEntropyLoss()):
             self.dtype = "long"
         else:
@@ -28,7 +34,7 @@ class BasicTrainableClassifier(nn.Module):
     def fit(self, train_ds, valid_ds, cbs=False,
             epochs=1, learning_rate=1e-3):
         self.train()
-        op = torch.optim.Adam(self.parameters(), lr=learning_rate)
+        op = self.opt(self.parameters(), lr=learning_rate)
         for e in range(epochs):
             torch.cuda.empty_cache() if torch.cuda.device_count() else None
             print(f"Epoch {e+1}")

@@ -4,6 +4,7 @@ import torch.nn.functional as F
 import torch.optim as optim
 from tqdm import tqdm
 from .tools import *
+from fastai.torch_core import Module
 
 def init_cnn(m, *layers):
     if getattr(m, 'bias', None) is not None: nn.init.constant_(m.bias, 0)
@@ -16,6 +17,10 @@ def cc(x, y=None):
         return x.cuda().long() if y =="long" else x.cuda().float()
     if not y: return x
     return x.long() if y =="long" else x.float()
+
+class Flatten(Module):
+    def __call__(self,x): return torch.flatten(x, start_dim=1)
+
 
 class BasicTrainableClassifier(nn.Module):
     def __init__(self, crit=nn.CrossEntropyLoss(),

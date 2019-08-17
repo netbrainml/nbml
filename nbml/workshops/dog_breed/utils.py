@@ -12,12 +12,12 @@ def get_data(path=None, full=False, top=10, **_):
     df_top = df[df['breed'].isin(top_breeds)]
     return df_top['id'], df_top['breed']
 
-def get_numpy(imloc, label, path=None, dim=224, **_):
+def get_numpy(imloc, label, path=None, dim=224, dir_="train", **_):
     x, y = [],[]
     classes = list(set(label))
     nc = len(classes)
     for data in tqdm(zip(imloc,label),total=len(imloc)):
-        x.append(cv2.resize(cv2.imread(path+f"train/{data[0]}.jpg"), (dim,dim)))
+        x.append(cv2.resize(cv2.imread(path+f"{dir_}/{data[0]}.jpg"), (dim,dim)))
         y.append(classes.index(data[1]))
     return np.array(x), np.array(y)
 

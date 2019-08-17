@@ -38,8 +38,8 @@ def process_imdb(X_train, y_train, X_test, y_test, n, dictv, bs=64):
     X_test_pds, y_test_pds = sliceton(X_test, y_test, n, dictv)
     x_train, x_test = ntot(X_train_pds), ntot(X_test_pds)
     y_train, y_test = torch.Tensor(y_train_pds), torch.Tensor(y_test_pds)
-    tdl = DataLoader(TensorDataset(x_train.long(), y_train), batch_size=bs, shuffle=True)
-    vdl = DataLoader(TensorDataset(x_test.long(), y_test), batch_size=bs, shuffle=True)
+    tdl = DataLoader(TensorDataset(x_train.long().squeeze(), y_train), batch_size=bs, shuffle=True)
+    vdl = DataLoader(TensorDataset(x_test.long().squeeze(), y_test), batch_size=bs, shuffle=True)
     return tdl, vdl
 
 def decode_review(text, dictv):

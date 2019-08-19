@@ -1,6 +1,7 @@
 import pandas as pd
 import cv2
 import torch
+from tqdm import tqdm
 from torch.utils.data import DataLoader, TensorDataset
 from ...pytorch import *
 

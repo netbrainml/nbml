@@ -5,6 +5,7 @@ import torch.optim as optim
 from .tools import *
 from fastai.torch_core import Module
 from progressbar import progressbar
+import time
 
 def init_cnn(m, *layers):
     if getattr(m, 'bias', None) is not None: nn.init.constant_(m.bias, 0)

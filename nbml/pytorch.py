@@ -2,9 +2,9 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
-from tqdm import tqdm
 from .tools import *
 from fastai.torch_core import Module
+from progressbar import progressbar
 
 def init_cnn(m, *layers):
     if getattr(m, 'bias', None) is not None: nn.init.constant_(m.bias, 0)
@@ -42,36 +42,38 @@ class BasicTrainableClassifier(nn.Module):
         op = self.opt(self.parameters(), lr=learning_rate)
         for e in range(epochs):
             torch.cuda.empty_cache() if torch.cuda.device_count() else None
-            print(f"Epoch {e+1}")
-            for data in tqdm(train_ds):
+            for data in progressbar(train_ds):
                 op.zero_grad()
                 pred = self(cc(data[0]))
                 loss = self.crit(pred, cc(data[1], self.dtype))
                 loss.backward(retain_graph = self.rg)
                 op.step()
-            self.cbs_(train_ds, valid_ds=valid_ds) if cbs else None
+            self.cbs_(e, train_ds, valid_ds=valid_ds) if cbs else None
+
             
     def acc(self, out, Y):
         return (torch.argmax(out, dim=1)==Y.long()).float().mean()
     
-    def cbs_(self, train_ds, valid_ds=None):
+    def cbs_(self, e, train_ds, valid_ds=None):
         self.eval()
         train_acc, train_loss = 0,0
         valid_acc, valid_loss = 0,0
-        for idx,data in enumerate(train_ds):
+        for idx,data in enumerate(progressbar(train_ds)):
             train_pred = self(cc(data[0]))
             train_acc += self.acc(train_pred, cc(data[1], self.dtype)).item()
             train_loss += self.crit(train_pred, cc(data[1], self.dtype)).item()
-        self.train_acc.append(train_acc/(idx+1))
-        self.train_loss.append(train_loss/(idx+1))
-        for idx,data in enumerate(valid_ds):
+        self.train_acc.append(train_acc/(idx+1)); self.train_loss.append(train_loss/(idx+1))
+        for idx,data in enumerate(progressbar(valid_ds)):
             valid_pred = self(cc(data[0]))
             valid_acc += self.acc(valid_pred, cc(data[1], self.dtype)).item()
             valid_loss += self.crit(valid_pred, cc(data[1], self.dtype)).item()
-        self.valid_acc.append(valid_acc/(idx+1))
-        self.valid_loss.append(valid_loss/(idx+1))
-        print(f"Accuracy: (V:{self.valid_acc[-1]}, T:{self.train_acc[-1]}), Loss: (V:{self.valid_loss[-1]}, T:{self.train_loss[-1]})")
+        self.valid_acc.append(valid_acc/(idx+1)); self.valid_loss.append(valid_loss/(idx+1))
+        time.sleep(1)
+        print(f"Epoch {e+1}:")
+        print(f'\tTrain Loss: {self.train_loss[-1]:.3f} | Train Acc: {self.train_acc[-1]*100:.2f}%')
+        print(f'\t Val. Loss: {self.valid_loss[-1]:.3f} |  Val. Acc: {self.valid_acc[-1]*100:.2f}%')
         self.train()
+        time.sleep(1)
 
     @property
     def plot(self):

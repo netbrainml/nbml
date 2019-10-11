@@ -59,7 +59,7 @@ def ConvRelu(in_c, out_c, ks, stride, padding=0):
     conv1 = nn.Conv3d(in_c, out_c, ks, stride, padding)
     return nn.Sequential(conv1,nn.LeakyReLU())
 
-def ResConv(in_c, kernel_size, stride, pad = kernel_size//2):
+def ResConv(in_c, kernel_size, stride):
     return nn.Sequential(ConvRelu(in_c, in_c//2, 1, 1),
-                         ConvRelu(in_c//2, in_c//2, kernel_size, stride, padding=pad),
+                         ConvRelu(in_c//2, in_c//2, kernel_size, stride, padding=kernel_size//2),
                          ConvRelu(in_c//2, in_c, 1, 1))
